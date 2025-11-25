@@ -27,7 +27,7 @@ export type TemplateAttributeChange<T> =
 /**
  * Maps HTML element attributes to their respective {@link TemplateAttributeChange} or values.
  *
- * If null is provided, the element will be removed.
+ * If null is provided, the element will be removed. If string is provided, textContents will be set.
  *
  * @example
  * ```ts
@@ -46,7 +46,8 @@ export type TemplateAttributeMapper<T extends AnyHTMLElement> =
     & // Allow any additional attributes as unknowns
     { [additional: string]: TemplateAttributeChange<unknown> }
   )
-  | null;
+  | null
+  | string;
 
 /**
  * Maps query selectors to their respective {@link TemplateAttributeMapper}.

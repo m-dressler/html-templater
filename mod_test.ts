@@ -170,6 +170,15 @@ Deno.test("Can modify attributes", () => {
   });
 });
 
+Deno.test("string TemplateAttributeMapper sets textContent", () => {
+  assertTemplated({
+    inputHTML: `<template><p></p></template>`,
+    runTemplater: () =>
+      new HTMLTemplater("template").instantiate({ p: "Test" }),
+    outputHTML: `<p>Test</p>`,
+  });
+});
+
 Deno.test("instantiate() w/o params creates single instance", () => {
   assertTemplated({
     inputHTML: `<template><br></template>`,
