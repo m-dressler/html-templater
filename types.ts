@@ -19,15 +19,20 @@ type AnyHTMLElement = HTMLElementTagNameMap[HTMLElementTags];
  *   style: (v) => ({ ...v, color: "red" }),
  * }
  */
-export type TemplateAttributeChange<T> =
-  | PartialIfStylesheet<T>
-  | ((previous: T) => PartialIfStylesheet<T>)
+export type TemplateAttributeChange<Input, Output = Input> =
+  | PartialIfStylesheet<Output>
+  | ((previous: Input) => PartialIfStylesheet<Output>)
   | null;
 
 /**
  * Maps HTML element attributes to their respective {@link TemplateAttributeChange} or values.
  *
  * If null is provided, the element will be removed. If string is provided, textContents will be set.
+ *
+ * The `classList` attribute is handled in the following ways, given what's provided:
+ *  - `string[]`: All values get **appended**
+ *  - `{[className: string]: boolean }`: True values get added, false get removed, unspecified remain unchanged
+ *  - `(prev: DOMTokenList) => DOMTokenList | ...`: Can modify (and return) existing list, create and return new list, or return any of the above values
  *
  * @example
  * ```ts
@@ -40,11 +45,22 @@ export type TemplateAttributeChange<T> =
  */
 export type TemplateAttributeMapper<T extends AnyHTMLElement> =
   | (
-    & { [attr in keyof T]?: TemplateAttributeChange<T[attr]> }
+    & {
+      [attr in Exclude<keyof T, "classList">]?: TemplateAttributeChange<
+        T[attr]
+      >;
+    }
     & // Include data-* attributes
     { [attr: `data-${string}`]: TemplateAttributeChange<string> }
     & // Allow any additional attributes as unknowns
     { [additional: string]: TemplateAttributeChange<unknown> }
+    & // classList is handled as a string[]
+    {
+      classList?: TemplateAttributeChange<
+        DOMTokenList,
+        DOMTokenList | string[] | { [className: string]: boolean }
+      >;
+    }
   )
   | null
   | string;

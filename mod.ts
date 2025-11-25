@@ -144,6 +144,25 @@ export class HTMLTemplater<
         el instanceof HTMLElement
       ) {
         Object.assign(el[attribute], resolvedValue);
+      } // Handle classList
+      else if (attribute === "classList") {
+        const { classList } = el;
+        if (Array.isArray(resolvedValue)) {
+          classList.add(...resolvedValue);
+        } // Handle `DOMTokenList` being returned and clear existing while adding new
+        else if (classList.constructor === resolvedValue.constructor) {
+          if (classList !== resolvedValue) {
+            classList.forEach((v) => classList.remove(v));
+            (resolvedValue as DOMTokenList).forEach((v) => classList.add(v));
+          }
+        } else if (typeof resolvedValue === "object") {
+          for (
+            const [className, shouldAdd] of Object.entries(resolvedValue)
+          ) {
+            if (shouldAdd) classList.add(className);
+            else classList.remove(className);
+          }
+        }
       } //  Update attribute directly if it exists on the element
       else if (attribute in el) {
         // @ts-expect-error TypeScript can't guarantee the attribute exists on the element

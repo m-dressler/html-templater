@@ -170,6 +170,45 @@ Deno.test("Can modify attributes", () => {
   });
 });
 
+Deno.test("classList TemplateAttributeMapper updates classList with custom logic", () => {
+  assertTemplated({
+    inputHTML: `<template><input class="existing"></template>`,
+    runTemplater: () =>
+      new HTMLTemplater("template").instantiate({
+        input: { classList: ["added"] },
+      }),
+    outputHTML: `<input class="existing added">`,
+  });
+
+  assertTemplated({
+    inputHTML: `<template><input class="existing"></template>`,
+    runTemplater: () =>
+      new HTMLTemplater("template").instantiate({
+        input: { classList: (v) => (v.add("added"), v) },
+      }),
+    outputHTML: `<input class="existing added">`,
+  });
+
+  assertTemplated({
+    inputHTML:
+      `<br class="other-class"><template><input class="existing"></template>`,
+    runTemplater: (dom) =>
+      new HTMLTemplater("template").instantiate({
+        input: { classList: dom.querySelector("br")?.classList },
+      }),
+    outputHTML: `<br class="other-class"><input class="other-class">`,
+  });
+
+  assertTemplated({
+    inputHTML: `<template><input class="removed"></template>`,
+    runTemplater: () =>
+      new HTMLTemplater("template").instantiate({
+        input: { classList: { removed: false, added: true } },
+      }),
+    outputHTML: `<input class="added">`,
+  });
+});
+
 Deno.test("string TemplateAttributeMapper sets textContent", () => {
   assertTemplated({
     inputHTML: `<template><p></p></template>`,
