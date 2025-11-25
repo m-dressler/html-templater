@@ -122,6 +122,9 @@ export class HTMLTemplater<
     el: Element,
     attributeMapper: TemplateAttributeMapper<HTMLElement>,
   ): void => {
+    // Handle null case removing the element
+    if (attributeMapper === null) return el.remove();
+
     for (const [attribute, value] of Object.entries(attributeMapper)) {
       // Handle mapper functions
       const resolvedValue = typeof value === "function"

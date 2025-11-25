@@ -27,6 +27,8 @@ export type TemplateAttributeChange<T> =
 /**
  * Maps HTML element attributes to their respective {@link TemplateAttributeChange} or values.
  *
+ * If null is provided, the element will be removed.
+ *
  * @example
  * ```ts
  * const attributeMapper: TemplateAttributeMapper<HTMLImageElement> = {
@@ -37,11 +39,14 @@ export type TemplateAttributeChange<T> =
  * ```
  */
 export type TemplateAttributeMapper<T extends AnyHTMLElement> =
-  & { [attr in keyof T]?: TemplateAttributeChange<T[attr]> }
-  & // Include data-* attributes
-  { [attr: `data-${string}`]: TemplateAttributeChange<string> }
-  & // Allow any additional attributes as unknowns
-  { [additional: string]: TemplateAttributeChange<unknown> };
+  | (
+    & { [attr in keyof T]?: TemplateAttributeChange<T[attr]> }
+    & // Include data-* attributes
+    { [attr: `data-${string}`]: TemplateAttributeChange<string> }
+    & // Allow any additional attributes as unknowns
+    { [additional: string]: TemplateAttributeChange<unknown> }
+  )
+  | null;
 
 /**
  * Maps query selectors to their respective {@link TemplateAttributeMapper}.
@@ -52,6 +57,7 @@ export type TemplateAttributeMapper<T extends AnyHTMLElement> =
  *   img: { src: "image.png", alt: "An image" },
  *   h2: { textContent: (v) => v + " - Updated" },
  *   ".my-class": { style: { color: "blue" } },
+ *  ".to-remove": null,
  * }
  * ```
  */

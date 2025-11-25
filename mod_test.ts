@@ -178,6 +178,19 @@ Deno.test("instantiate() w/o params creates single instance", () => {
   });
 });
 
+Deno.test("Can remove elements", () => {
+  assertTemplated({
+    inputHTML: `<template><br><input></template>`,
+    runTemplater: () => new HTMLTemplater("template").instantiate({}),
+    outputHTML: `<br><input>`,
+  });
+  assertTemplated({
+    inputHTML: `<template><br><input></template>`,
+    runTemplater: () => new HTMLTemplater("template").instantiate({ br: null }),
+    outputHTML: `<input>`,
+  });
+});
+
 Deno.test("Can use spread constructor", () => {
   assertTemplated({
     inputHTML: `<template><input></template>`,
