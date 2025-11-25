@@ -25,7 +25,7 @@ export type TemplateAttributeChange<T> =
   | null;
 
 /**
- * Maps HTML element attributes to their respective mapper functions or values.
+ * Maps HTML element attributes to their respective {@link TemplateAttributeChange} or values.
  *
  * @example
  * ```ts
@@ -44,7 +44,7 @@ export type TemplateAttributeMapper<T extends AnyHTMLElement> =
   { [additional: string]: TemplateAttributeChange<unknown> };
 
 /**
- * Maps query selectors to their respective attribute mappers.
+ * Maps query selectors to their respective {@link TemplateAttributeMapper}.
  *
  * @example
  * ```ts

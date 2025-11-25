@@ -160,7 +160,7 @@ export class HTMLTemplater<
     return clone;
   }
 
-  /** Creates a new instance(s) of the template and updates all the query selectors. */
+  /** Creates a new instance(s) of the template and updates all the query selectors using the {@link TemplateElementMapper}(s). */
   public instantiate(...templateMappers: ReadonlyArray<MaybeArray<T>>): this {
     const fragments = (templateMappers.flat() as ReadonlyArray<T>).map(
       (mapper) => this.createInstance(mapper),
