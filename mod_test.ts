@@ -170,6 +170,14 @@ Deno.test("Can modify attributes", () => {
   });
 });
 
+Deno.test("instantiate() w/o params creates single instance", () => {
+  assertTemplated({
+    inputHTML: `<template><br></template>`,
+    runTemplater: () => new HTMLTemplater("template").instantiate(),
+    outputHTML: `<br>`,
+  });
+});
+
 Deno.test("Can use spread constructor", () => {
   assertTemplated({
     inputHTML: `<template><input></template>`,

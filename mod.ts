@@ -162,9 +162,11 @@ export class HTMLTemplater<
 
   /** Creates a new instance(s) of the template and updates all the query selectors using the {@link TemplateElementMapper}(s). */
   public instantiate(...templateMappers: ReadonlyArray<MaybeArray<T>>): this {
-    const fragments = (templateMappers.flat() as ReadonlyArray<T>).map(
-      (mapper) => this.createInstance(mapper),
-    );
+    const mapperArray = templateMappers.flat() as Array<T>;
+    // If no arguments provided, create a single instance w/o substitutions
+    if (mapperArray.length === 0) mapperArray.push({} as T);
+
+    const fragments = mapperArray.map((mapper) => this.createInstance(mapper));
 
     this.instances.push(...fragments.flatMap((f) => Array.from(f.childNodes)));
     if (this.appendToParent) this.parent?.append(...fragments);
