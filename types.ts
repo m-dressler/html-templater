@@ -63,7 +63,8 @@ export type TemplateAttributeMapper<T extends AnyHTMLElement> =
     }
   )
   | null
-  | string;
+  | string
+  | ((element: Element) => unknown);
 
 /**
  * Maps query selectors to their respective {@link TemplateAttributeMapper}.

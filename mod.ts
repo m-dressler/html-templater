@@ -124,6 +124,11 @@ export class HTMLTemplater<
   ): void => {
     // Handle null case removing the element
     if (attributeMapper === null) return el.remove();
+    // Handle custom mapper
+    if (typeof attributeMapper === "function") {
+      attributeMapper(el);
+      return;
+    }
     // Handle string case setting textContent
     if (typeof attributeMapper === "string") {
       attributeMapper = { textContent: attributeMapper };

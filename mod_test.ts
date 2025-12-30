@@ -218,6 +218,17 @@ Deno.test("string TemplateAttributeMapper sets textContent", () => {
   });
 });
 
+Deno.test("Function TemplateAttributeMapper provides element", () => {
+  assertTemplated({
+    inputHTML: `<template><p id="test"></p></template>`,
+    runTemplater: () =>
+      new HTMLTemplater("template").instantiate({
+        p: (e) => e.id += "-2",
+      }),
+    outputHTML: `<p id="test-2"></p>`,
+  });
+});
+
 Deno.test("instantiate() w/o params creates single instance", () => {
   assertTemplated({
     inputHTML: `<template><br></template>`,
