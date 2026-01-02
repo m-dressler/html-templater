@@ -1,7 +1,12 @@
 /// <reference lib="deno.ns" />
 import { DOMParser, Element, type HTMLDocument } from "@b-fuze/deno-dom";
 import { HTMLTemplater, HTMLTemplaterError } from "@md/html-templater";
-import { assertEquals, assertInstanceOf, assertThrows } from "@std/assert";
+import {
+  assert,
+  assertEquals,
+  assertInstanceOf,
+  assertThrows,
+} from "@std/assert";
 
 /** Helper utility to add the `style` property to Elements as per open [issue](https://github.com/b-fuze/deno-dom/issues/194) */
 const addStyleToElement = (el: Element) => {
@@ -207,6 +212,34 @@ Deno.test("classList TemplateAttributeMapper updates classList with custom logic
       }),
     outputHTML: `<input class="added">`,
   });
+});
+
+Deno.test("eventListeners TemplateAttributeMapper adds listeners with custom logic", () => {
+  const dom = new DOMParser().parseFromString(
+    `<body><template><input></template></body>`,
+    "text/html",
+  );
+  globalThis.document = dom as unknown as Document;
+
+  let inputEventFired = false;
+  let clickEventFired = false;
+
+  new HTMLTemplater("template").instantiate({
+    input: {
+      eventListeners: {
+        input: () => inputEventFired = true,
+        click: () => clickEventFired = true,
+      },
+    },
+  });
+
+  const inputEl = dom.querySelector("input")!;
+
+  inputEl.dispatchEvent(new Event("input"));
+  assert(inputEventFired, "Input event fired");
+
+  inputEl.dispatchEvent(new Event("click"));
+  assert(clickEventFired, "Click event fired");
 });
 
 Deno.test("string TemplateAttributeMapper sets textContent", () => {

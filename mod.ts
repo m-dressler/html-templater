@@ -168,6 +168,11 @@ export class HTMLTemplater<
             else classList.remove(className);
           }
         }
+      } // Handle eventListeners
+      else if (attribute === "eventListeners") {
+        for (const event in resolvedValue) {
+          el.addEventListener(event, resolvedValue[event]);
+        }
       } //  Update attribute directly if it exists on the element
       else if (attribute in el) {
         // @ts-expect-error TypeScript can't guarantee the attribute exists on the element

@@ -34,12 +34,17 @@ export type TemplateAttributeChange<Input, Output = Input> =
  *  - `{[className: string]: boolean }`: True values get added, false get removed, unspecified remain unchanged
  *  - `(prev: DOMTokenList) => DOMTokenList | ...`: Can modify (and return) existing list, create and return new list, or return any of the above values
  *
+ * The `eventListeners` attribute allows attaching event listeners with proper event type inference:
+ *  - Standard events like `click`, `input`, `keydown` are typed with their specific event types
+ *  - Custom events fall back to generic `Event` type
+ *
  * @example
  * ```ts
  * const attributeMapper: TemplateAttributeMapper<HTMLImageElement> = {
  *   src: "image.png",
  *   alt: (v) => v + " - Updated",
  *   style: { width: "100px", height: "100px" },
+ *   eventListeners: { click: (e) => console.log(e.clientX) },
  * }
  * ```
  */
@@ -54,12 +59,19 @@ export type TemplateAttributeMapper<T extends AnyHTMLElement> =
     { [attr: `data-${string}`]: TemplateAttributeChange<string> }
     & // Allow any additional attributes as unknowns
     { [additional: string]: TemplateAttributeChange<unknown> }
-    & // classList is handled as a string[]
+    & // Additional separately handled properties
     {
+      // classList is handled as a string[]
       classList?: TemplateAttributeChange<
         DOMTokenList,
         DOMTokenList | string[] | { [className: string]: boolean }
       >;
+      // Event listeners to attach
+      eventListeners?: {
+        [K in keyof HTMLElementEventMap]?: (
+          event: HTMLElementEventMap[K],
+        ) => unknown;
+      };
     }
   )
   | null
